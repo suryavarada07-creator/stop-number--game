@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stop the Number</title>
+
+    <title>Stop at 10.00</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,52 +14,32 @@
 
     <div class="game-container">
 
-        <!-- Game title -->
-        <h1>🎯 STOP THE NUMBER</h1>
+        <h1>🎯 STOP AT 10.00</h1>
 
-        <!-- Target number -->
-        <div class="target-box">
-            TARGET NUMBER:
-            <span id="targetNumber">68</span>
+        <p class="instruction">
+            Stop the timer exactly at <strong>10.00</strong>
+            to win the offer!
+        </p>
+
+        <div class="timer-box">
+            <span id="timer">00.00</span>
         </div>
 
-        <!-- Main number -->
-        <div class="number-box">
-            <span id="currentNumber">1</span>
-        </div>
-
-        <!-- Game message -->
         <div id="message" class="message">
-            Set your target and press START!
+            Press START to begin
         </div>
 
-        <!-- Target settings -->
-        <div class="settings">
-            <label for="targetInput">Set Target Number</label>
-
-            <div class="target-controls">
-                <input type="number" id="targetInput" min="1" max="100" value="68">
-
-                <button id="saveTarget">SAVE</button>
-            </div>
-        </div>
-
-        <!-- Main buttons -->
         <div class="buttons">
 
-            <button id="startBtn" class="start-btn">
+            <!-- ONE BUTTON ONLY -->
+            <button id="startStopBtn" class="start-btn">
                 ▶ START
             </button>
 
-            <button id="stopBtn" class="stop-btn" disabled>
-                ⏹ STOP
-            </button>
-
         </div>
 
-        <!-- New Game -->
-        <button id="newGameBtn" class="new-game-btn">
-            🔄 NEW GAME
+        <button id="resetBtn" class="reset-btn">
+            🔄 RESET
         </button>
 
     </div>

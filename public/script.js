@@ -1,185 +1,130 @@
 // ===============================
-// STOP THE NUMBER GAME
+// STOP AT 10.00 GAME
 // ===============================
 
-// Starting target number
-let targetNumber = 68;
+// Timer value in milliseconds
+let elapsedTime = 0;
 
-// Current number displayed
-let currentNumber = 1;
+// Timer interval
+let timerInterval = null;
 
-// Game timer
-let gameTimer = null;
-
-// Is the game currently running?
-let gameRunning = false;
+// Is timer running?
+let timerRunning = false;
 
 
 // ===============================
 // GET HTML ELEMENTS
 // ===============================
 
-const currentNumberDisplay =
-    document.getElementById("currentNumber");
+const timerDisplay =
+    document.getElementById("timer");
 
-const targetNumberDisplay =
-    document.getElementById("targetNumber");
+const startStopButton =
+    document.getElementById("startStopBtn");
 
-const targetInput =
-    document.getElementById("targetInput");
-
-const saveTargetButton =
-    document.getElementById("saveTarget");
-
-const startButton =
-    document.getElementById("startBtn");
-
-const stopButton =
-    document.getElementById("stopBtn");
-
-const newGameButton =
-    document.getElementById("newGameBtn");
+const resetButton =
+    document.getElementById("resetBtn");
 
 const message =
     document.getElementById("message");
 
 
 // ===============================
-// DISPLAY INITIAL TARGET
+// FORMAT TIMER
 // ===============================
 
-targetNumberDisplay.textContent = targetNumber;
-targetInput.value = targetNumber;
+function updateDisplay() {
+
+    const seconds =
+        Math.floor(elapsedTime / 1000);
+
+    const hundredths =
+        Math.floor((elapsedTime % 1000) / 10);
+
+    const formattedSeconds =
+        String(seconds).padStart(2, "0");
+
+    const formattedHundredths =
+        String(hundredths).padStart(2, "0");
+
+    timerDisplay.textContent =
+        `${formattedSeconds}.${formattedHundredths}`;
+}
 
 
 // ===============================
-// SAVE TARGET NUMBER
+// START / STOP BUTTON
 // ===============================
 
-saveTargetButton.addEventListener("click", function () {
+startStopButton.addEventListener("click", function () {
 
-    // Don't allow changing target while game is running
-    if (gameRunning) {
+    // ===========================
+    // START
+    // ===========================
+
+    if (!timerRunning) {
+
+        timerRunning = true;
+
+        const startTime =
+            Date.now() - elapsedTime;
+
+        timerInterval = setInterval(function () {
+
+            elapsedTime =
+                Date.now() - startTime;
+
+            updateDisplay();
+
+        }, 10);
+
+        // Change SAME button to STOP
+        startStopButton.textContent = "⏹ STOP";
+
+        startStopButton.className = "stop-btn";
+
         message.textContent =
-            "Stop the current game before changing the target.";
+            "Timer running... Stop when you want!";
+
+        message.className =
+            "message";
 
         return;
     }
 
-    const enteredNumber =
-        Number(targetInput.value);
 
-    // Check number
-    if (
-        enteredNumber < 1 ||
-        enteredNumber > 100 ||
-        !Number.isInteger(enteredNumber)
-    ) {
+    // ===========================
+    // STOP
+    // ===========================
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+
+    timerRunning = false;
+
+    // Change SAME button back to START
+    startStopButton.textContent = "▶ START";
+
+    startStopButton.className = "start-btn";
+
+
+    // ===========================
+    // CHECK RESULT
+    // ===========================
+
+    if (elapsedTime === 10000) {
 
         message.textContent =
-            "Please enter a number from 1 to 100.";
-
-        return;
-    }
-
-    // Save target
-    targetNumber = enteredNumber;
-
-    // Display target
-    targetNumberDisplay.textContent =
-        targetNumber;
-
-    message.textContent =
-        "Target saved! Press START.";
-
-    message.className = "message";
-});
-
-
-// ===============================
-// START GAME
-// ===============================
-
-startButton.addEventListener("click", function () {
-
-    // Prevent starting twice
-    if (gameRunning) {
-        return;
-    }
-
-    gameRunning = true;
-
-    // Start from 1 every time
-    currentNumber = 1;
-
-    currentNumberDisplay.textContent =
-        currentNumber;
-
-    // Change buttons
-    startButton.disabled = true;
-    stopButton.disabled = false;
-
-    // Disable target controls
-    targetInput.disabled = true;
-    saveTargetButton.disabled = true;
-
-    message.textContent =
-        "Numbers are running... STOP when you want!";
-
-    message.className = "message";
-
-    // Start number movement
-    gameTimer = setInterval(function () {
-
-        currentNumber++;
-
-        // After 100, start again from 1
-        if (currentNumber > 100) {
-            currentNumber = 1;
-        }
-
-        currentNumberDisplay.textContent =
-            currentNumber;
-
-    }, 60);
-
-});
-
-
-// ===============================
-// STOP GAME
-// ===============================
-
-stopButton.addEventListener("click", function () {
-
-    if (!gameRunning) {
-        return;
-    }
-
-    // Stop timer
-    clearInterval(gameTimer);
-
-    gameTimer = null;
-
-    gameRunning = false;
-
-    // Change buttons
-    startButton.disabled = true;
-    stopButton.disabled = true;
-
-    // Check result
-    if (currentNumber === targetNumber) {
-
-        message.innerHTML =
-            "🎉 YOU WON! 🎉";
+            "🎉 YOU WON THE OFFER! 🎉";
 
         message.className =
             "message win";
 
     } else {
 
-        message.innerHTML =
-            "😄 BETTER LUCK NEXT TIME!";
+        message.textContent =
+            `You stopped at ${timerDisplay.textContent}`;
 
         message.className =
             "message lose";
@@ -189,38 +134,44 @@ stopButton.addEventListener("click", function () {
 
 
 // ===============================
-// NEW GAME
+// RESET
 // ===============================
 
-newGameButton.addEventListener("click", function () {
+resetButton.addEventListener("click", function () {
 
-    // Stop timer if running
-    if (gameTimer !== null) {
-        clearInterval(gameTimer);
+    // Stop timer
+    if (timerInterval !== null) {
+
+        clearInterval(timerInterval);
+
     }
 
-    gameTimer = null;
+    timerInterval = null;
 
-    gameRunning = false;
+    timerRunning = false;
 
-    // Reset number
-    currentNumber = 1;
+    // Reset time
+    elapsedTime = 0;
 
-    currentNumberDisplay.textContent =
-        currentNumber;
+    updateDisplay();
 
-    // Reset buttons
-    startButton.disabled = false;
-    stopButton.disabled = true;
+    // Reset SAME button
+    startStopButton.textContent = "▶ START";
 
-    // Allow target changing
-    targetInput.disabled = false;
-    saveTargetButton.disabled = false;
+    startStopButton.className = "start-btn";
 
-    // Message
+    // Reset message
     message.textContent =
-        "Set your target and press START!";
+        "Press START to begin";
 
-    message.className = "message";
+    message.className =
+        "message";
 
 });
+
+
+// ===============================
+// INITIAL DISPLAY
+// ===============================
+
+updateDisplay();
